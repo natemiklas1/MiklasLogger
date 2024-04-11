@@ -1,0 +1,10 @@
+[tool.ruff]
+exclude = [
+    ".dist",
+    ".build",
+    ".venv",
+    ".testingUtilities.egg-info"
+]
+
+[tool.ruff.format]
+quote-style = "single"
