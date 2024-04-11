@@ -4,18 +4,19 @@ from datetime import datetime
 
 
 class TicketLogger:
-    LOG_FILE_SUFFIX = '_InstallTicketCreator.log'
-
     def __init__(
         self,
         logsDirectory: str,
         loggingLevel: str,
         ignorePrintToConsole: bool,
+        logFileSuffix: str = '',
         amountLogsToKeep: int = 20,
     ):
         # self.loggingLevel = loggingLevel
 
         self._amountLogsToKeep = amountLogsToKeep
+
+        self._logFileSuffix = logFileSuffix
 
         if loggingLevel is None:
             loggingLevel = 'INFO'
@@ -28,7 +29,7 @@ class TicketLogger:
         nowString = now.strftime('%Y%m%d%H%M%S')
 
         self._logsDirectory = logsDirectory
-        self._logFileName = nowString + self.LOG_FILE_SUFFIX
+        self._logFileName = nowString + self._logFileSuffix
 
         # self.logsDirectory = logsDirectory
 
@@ -74,7 +75,7 @@ class TicketLogger:
     def _logClean(self):
         filesInDir = os.listdir(self._logsDirectory)
         ticketLogFiles = [
-            file for file in filesInDir if file.endswith(self.LOG_FILE_SUFFIX)
+            file for file in filesInDir if file.endswith(self._logFileSuffix)
         ]
 
         if len(ticketLogFiles) >= self._amountLogsToKeep:
