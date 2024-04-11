@@ -3,12 +3,12 @@ import os
 from datetime import datetime
 
 
-class TicketLogger:
+class MiklasLogger:
     def __init__(
         self,
         logsDirectory: str,
-        loggingLevel: str,
         ignorePrintToConsole: bool,
+        loggingLevel: str = 'INFO',
         logFileSuffix: str = '',
         amountLogsToKeep: int = 20,
     ):
@@ -29,14 +29,14 @@ class TicketLogger:
         nowString = now.strftime('%Y%m%d%H%M%S')
 
         self._logsDirectory = logsDirectory
-        self._logFileName = nowString + self._logFileSuffix
+        self._logFileName = nowString + '_' + self._logFileSuffix + '.log'
 
         # self.logsDirectory = logsDirectory
 
         if not os.path.exists(logsDirectory):
             os.makedirs(logsDirectory)
 
-        logger = logging.getLogger('TicketLogger')
+        logger = logging.getLogger('MiklasLogger')
 
         handler = logging.FileHandler(self._logsDirectory + self._logFileName, mode='w')
 
