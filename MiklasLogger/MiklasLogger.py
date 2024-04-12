@@ -11,6 +11,7 @@ class MiklasLogger:
         loggingLevel: str = 'INFO',
         logFileSuffix: str = '',
         amountLogsToKeep: int = 20,
+        loggerName: str = 'MiklasLogger',
     ):
         # self.loggingLevel = loggingLevel
 
@@ -36,7 +37,7 @@ class MiklasLogger:
         if not os.path.exists(logsDirectory):
             os.makedirs(logsDirectory)
 
-        logger = logging.getLogger('MiklasLogger')
+        logger = logging.getLogger(loggerName)
 
         handler = logging.FileHandler(self._logsDirectory + self._logFileName, mode='w')
 
