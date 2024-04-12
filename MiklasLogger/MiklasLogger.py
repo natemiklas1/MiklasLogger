@@ -10,7 +10,7 @@ class MiklasLogger:
         ignorePrintToConsole: bool,
         loggingLevel: str = 'INFO',
         logFileSuffix: str = '',
-        amountLogsToKeep: int = 20,
+        amountLogsToKeep: int | None = None,
         loggerName: str = 'MiklasLogger',
     ):
         # self.loggingLevel = loggingLevel
@@ -55,19 +55,7 @@ class MiklasLogger:
     def getCurrentLevel(self):
         return self._logger.level
 
-    def writeInfo(self, message: str):
-        self._logger.info(message)
-        self._printMessage(message)
-
-    def writeDebug(self, message: str):
-        self._logger.debug(message)
-        self._printMessage(message)
-
-    def writeCrticial(self, message: str):
-        self._logger.critical(message)
-        self._printMessage(message)
-
-    def _printMessage(self, message: str):
+    def _printMessage(self, message: str) -> bool:
         if self.ignorePrintToConsole:
             return False
         print(message)
@@ -103,3 +91,15 @@ class MiklasLogger:
             ]
         else:
             self._logger.debug("Cant't delete more logs than we have.")
+
+    def writeInfo(self, message: str):
+        self._logger.info(message)
+        self._printMessage(message)
+
+    def writeDebug(self, message: str):
+        self._logger.debug(message)
+        self._printMessage(message)
+
+    def writeCrticial(self, message: str):
+        self._logger.critical(message)
+        self._printMessage(message)

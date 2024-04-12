@@ -10,7 +10,7 @@ except TypeError:
 
 setuptools.setup(
     name='MiklasLogger',
-    version='0.0.1',
+    version='1.0.0',
     author='Nathaniel Miklas',
     author_email='natemiklas1@gmail.com',
     description='Custom logging class because I got tired of rewriting one for each project',
