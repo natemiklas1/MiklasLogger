@@ -1,19 +1,19 @@
 import setuptools
 
-# try:
-#     with open('README.md', 'r', encoding='utf-8') as fh:
-#         long_description = fh.read()
-# except TypeError:
-#     # if we cant use encoding becuase of < python3, lets just do this
-#     with open('README.md', 'r') as fh:
-#         long_description = fh.read()
+try:
+    with open('README.md', 'r', encoding='utf-8') as fh:
+        long_description = fh.read()
+except TypeError:
+    # if we cant use encoding becuase of < python3, lets just do this
+    with open('README.md', 'r') as fh:
+        long_description = fh.read()
 
 setuptools.setup(
     name='MiklasLogger',
     version='0.0.1',
     author='Nathaniel Miklas',
     author_email='natemiklas1@gmail.com',
-    description='Loggin',
+    description='Custom logging class because I got tired of rewriting one for each project',
     long_description='',
     long_description_content_type='text/markdown',
     url='https://github.com/natemiklas1/MiklasLogger.git',
@@ -22,5 +22,5 @@ setuptools.setup(
     },
     license='LICENSE',
     packages=['MiklasLogger'],
-    install_requires=[],
+    install_requires=['logging >= 0.4.9.6'],
 )

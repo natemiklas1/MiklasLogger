@@ -1,0 +1,1 @@
+Custom logging class developed by Nate Miklas.
