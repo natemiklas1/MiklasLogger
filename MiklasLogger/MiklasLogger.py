@@ -39,7 +39,7 @@ class MiklasLogger:
 
         logger = logging.getLogger(loggerName)
 
-        handler = logging.FileHandler(self._logsDirectory + self._logFileName, mode='w')
+        handler = logging.FileHandler(os.path.join(self._logsDirectory + self._logFileName), mode='w')
 
         formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
 
