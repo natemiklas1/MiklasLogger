@@ -3,6 +3,74 @@ import os
 from datetime import datetime
 
 
+def getMiklasLogger(
+    logsDirectory: str,
+    ignorePrintToConsole: bool = False,
+    loggingLevel: str = 'INFO',
+    logFileSuffx: str = '',
+    amountLogsToKeep: int | None = None,
+    loggerName: str = 'MiklasLogger',
+):
+    if loggingLevel is None:
+        loggingLevel = 'INFO'
+    if ignorePrintToConsole is None:
+        ignorePrintToConsole is False
+    now = datetime.now()
+    nowString = now.strftime('%Y%m%d%H%M%S')
+
+    logFileName = nowString + '_' + logFileSuffx + '.log'
+
+    if not os.path.exists(logsDirectory):
+        os.makedirs(logsDirectory)
+
+    logger = logging.getLogger(loggerName)
+
+    print(logsDirectory + logFileName)
+    handler = logging.FileHandler(os.path.join(logsDirectory,logFileName), mode='w')
+
+    formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(loggingLevel)
+
+
+    def logClean():
+        filesInDir = os.listdir(self._logsDirectory)
+        ticketLogFiles = [
+            file for file in filesInDir if file.endswith(logFileSuffix)
+        ]
+
+        if len(ticketLogFiles) >= self._amountLogsToKeep:
+            fileswithDates = [
+                {
+                    'date': os.path.getctime(os.path.join(logsDirectory, file)),
+                    'fileName': file,
+                }
+                for file in ticketLogFiles
+            ]
+
+            fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
+            [
+                (
+                    self._logger.debug(
+                        f"will delete file: {os.path.join(logsDirectory, file['fileName'])}"
+                    ),
+                    os.remove(os.path.join(logsDirectory, file['fileName'])),
+                )
+                for file in fileswithDatesSorted[
+                    0 : len(fileswithDatesSorted) - amountLogsToKeep
+                ]
+            ]
+        else:
+            logger.debug("Cant't delete more logs than we have.")
+
+    if amountLogsToKeep is not None:
+        logClean()
+
+    return logger
+
+
 class MiklasLogger:
     def __init__(
         self,

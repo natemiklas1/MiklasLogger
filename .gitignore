@@ -1,2 +1,5 @@
 dist/
 MiklasLogger.egg-info
+logs/
+test.py
+__pycache__
