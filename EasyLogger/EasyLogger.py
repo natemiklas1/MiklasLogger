@@ -5,8 +5,8 @@ from datetime import datetime
 
 # LOGGING_STYLES = ('DEFAULT', 'NEW_FILE')
 LOGGING_STYLES = {
-    'default': 'DEFAULT',
-    'newFile': 'NEW_FILE'
+    'default': {'style': 'DEFAULT', 'mode': 'a'},
+    'newFile': {'style': 'NEW_FILE', 'mode': 'w'},
 }
 
 FILE_TYPE = '.log'
@@ -17,14 +17,14 @@ DEFAULT will create one logging stream per logger and continually append.
 NEW_FILE will create a new log file each time a new logger instance is created.
 """
 
+
 def getEasyLogger(
-    
     logsDirectory: str,
     ignorePrintToConsole: bool = False,
     loggingLevel: str = 'INFO',
     amountLogsToKeep: int | None = None,
     loggerName: str = 'EasyLogger',
-    loggingStyle: str = 'DEFAULT'
+    loggingStyle: str = 'DEFAULT',
 ):
     """
     We can use this if we want a super easy logger
@@ -34,9 +34,12 @@ def getEasyLogger(
     if ignorePrintToConsole is None:
         ignorePrintToConsole is False
 
-    if loggingStyle not in (list(LOGGING_STYLES.values())):
-        loggingStyle = LOGGING_STYLES['default']
+    styles = []
+    for k, v in LOGGING_STYLES.items():
+        styles.append(v['style'])   
 
+    if loggingStyle not in styles:
+        loggingStyle = 'DEFAULT'
 
     if loggingStyle == LOGGING_STYLES['default']:
         logFilePrefix = loggerName
@@ -47,20 +50,20 @@ def getEasyLogger(
 
     fullLogFileName = logFilePrefix + FILE_TYPE
 
-
     if not os.path.exists(logsDirectory):
         os.makedirs(logsDirectory)
 
     logger = logging.getLogger(loggerName)
 
-    handler = logging.FileHandler(os.path.join(logsDirectory,fullLogFileName), mode='a')
+    handler = logging.FileHandler(
+        os.path.join(logsDirectory, fullLogFileName), mode=LOGGING_STYLES[loggingStyle['mode']]
+    )
 
     formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
 
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(loggingLevel)
-
 
     if amountLogsToKeep is not None:
         logClean(logger, logsDirectory, loggerName, amountLogsToKeep)
@@ -112,7 +115,12 @@ class EasyLogger:
         self._logger = logger
 
         if self._amountLogsToKeep:
-            logClean(self._logger, self._logsDirectory, self._logFileSuffix, self._amountLogsToKeep)
+            logClean(
+                self._logger,
+                self._logsDirectory,
+                self._logFileSuffix,
+                self._amountLogsToKeep,
+            )
 
     def getCurrentLevel(self):
         return self._logger.level
@@ -122,7 +130,6 @@ class EasyLogger:
             return False
         print(message)
         return True
-
 
     def writeInfo(self, message: str):
         self._logger.info(message)
@@ -137,12 +144,9 @@ class EasyLogger:
         self._printMessage(message)
 
 
-
 def logClean(logger, logsDirectory: str, loggerName: str, amountLogsToKeep: int):
     filesInDir = os.listdir(logsDirectory)
-    ticketLogFiles = [
-        file for file in filesInDir if file.startswith(loggerName)
-    ]
+    ticketLogFiles = [file for file in filesInDir if file.startswith(loggerName)]
 
     if len(ticketLogFiles) >= amountLogsToKeep:
         fileswithDates = [
