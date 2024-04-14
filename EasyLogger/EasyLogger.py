@@ -3,29 +3,35 @@ import os
 from datetime import datetime
 
 
-def getMiklasLogger(
+def getEasyLogger(
+    
     logsDirectory: str,
     ignorePrintToConsole: bool = False,
     loggingLevel: str = 'INFO',
     logFileSuffx: str = '',
     amountLogsToKeep: int | None = None,
-    loggerName: str = 'MiklasLogger',
+    loggerName: str = 'EasyLogger',
 ):
+    """
+    We can use this if we want a super easy logger
+    """
     if loggingLevel is None:
         loggingLevel = 'INFO'
     if ignorePrintToConsole is None:
         ignorePrintToConsole is False
-    now = datetime.now()
-    nowString = now.strftime('%Y%m%d%H%M%S')
 
-    logFileName = nowString + '_' + logFileSuffx + '.log'
+    #now = datetime.now()
+    #nowString = now.strftime('%Y%m%d%H%M%S')
+
+    if logFileSuffx == '':
+        logFileSuffx = '_' + logFileSuffx 
+    logFileName = loggerName + '_' + logFileSuffx + '.log'
 
     if not os.path.exists(logsDirectory):
         os.makedirs(logsDirectory)
 
     logger = logging.getLogger(loggerName)
 
-    print(logsDirectory + logFileName)
     handler = logging.FileHandler(os.path.join(logsDirectory,logFileName), mode='w')
 
     formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
@@ -35,38 +41,8 @@ def getMiklasLogger(
     logger.setLevel(loggingLevel)
 
 
-    def logClean():
-        filesInDir = os.listdir(self._logsDirectory)
-        ticketLogFiles = [
-            file for file in filesInDir if file.endswith(logFileSuffix)
-        ]
-
-        if len(ticketLogFiles) >= self._amountLogsToKeep:
-            fileswithDates = [
-                {
-                    'date': os.path.getctime(os.path.join(logsDirectory, file)),
-                    'fileName': file,
-                }
-                for file in ticketLogFiles
-            ]
-
-            fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
-            [
-                (
-                    self._logger.debug(
-                        f"will delete file: {os.path.join(logsDirectory, file['fileName'])}"
-                    ),
-                    os.remove(os.path.join(logsDirectory, file['fileName'])),
-                )
-                for file in fileswithDatesSorted[
-                    0 : len(fileswithDatesSorted) - amountLogsToKeep
-                ]
-            ]
-        else:
-            logger.debug("Cant't delete more logs than we have.")
-
     if amountLogsToKeep is not None:
-        logClean()
+        logClean(logger, logsDirectory, logFileSuffx, amountLogsToKeep)
 
     return logger
 
@@ -118,7 +94,7 @@ class MiklasLogger:
         self._logger = logger
 
         if self._amountLogsToKeep:
-            self._logClean()
+            logClean(self._logger, self._logsDirectory, self._logFileSuffix, self._amountLogsToKeep)
 
     def getCurrentLevel(self):
         return self._logger.level
@@ -129,36 +105,6 @@ class MiklasLogger:
         print(message)
         return True
 
-    def _logClean(self):
-        filesInDir = os.listdir(self._logsDirectory)
-        ticketLogFiles = [
-            file for file in filesInDir if file.endswith(self._logFileSuffix)
-        ]
-
-        if len(ticketLogFiles) >= self._amountLogsToKeep:
-            self.writeDebug('Deleting log files...')
-            fileswithDates = [
-                {
-                    'date': os.path.getctime(os.path.join(self._logsDirectory, file)),
-                    'fileName': file,
-                }
-                for file in ticketLogFiles
-            ]
-
-            fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
-            [
-                (
-                    self._logger.debug(
-                        f"will delete file: {os.path.join(self._logsDirectory, file['fileName'])}"
-                    ),
-                    os.remove(os.path.join(self._logsDirectory, file['fileName'])),
-                )
-                for file in fileswithDatesSorted[
-                    0 : len(fileswithDatesSorted) - self._amountLogsToKeep
-                ]
-            ]
-        else:
-            self._logger.debug("Cant't delete more logs than we have.")
 
     def writeInfo(self, message: str):
         self._logger.info(message)
@@ -171,3 +117,35 @@ class MiklasLogger:
     def writeCrticial(self, message: str):
         self._logger.critical(message)
         self._printMessage(message)
+
+
+
+def logClean(logger, logsDirectory: str, logFileSuffx: str, amountLogsToKeep: int):
+    filesInDir = os.listdir(logsDirectory)
+    ticketLogFiles = [
+        file for file in filesInDir if file.endswith(logFileSuffx)
+    ]
+
+    if len(ticketLogFiles) >= amountLogsToKeep:
+        fileswithDates = [
+            {
+                'date': os.path.getctime(os.path.join(logsDirectory, file)),
+                'fileName': file,
+            }
+            for file in ticketLogFiles
+        ]
+
+        fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
+        [
+            (
+                logger.debug(
+                    f"will delete file: {os.path.join(logsDirectory, file['fileName'])}"
+                ),
+                os.remove(os.path.join(logsDirectory, file['fileName'])),
+            )
+            for file in fileswithDatesSorted[
+                0 : len(fileswithDatesSorted) - amountLogsToKeep
+            ]
+        ]
+    else:
+        logger.debug("Cant't delete more logs than we have.")

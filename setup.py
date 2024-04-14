@@ -9,7 +9,7 @@ except TypeError:
         long_description = fh.read()
 
 setuptools.setup(
-    name='MiklasLogger',
+    name='EasyLogger',
     version='1.0.0',
     author='Nathaniel Miklas',
     author_email='natemiklas1@gmail.com',
@@ -21,6 +21,6 @@ setuptools.setup(
         # "Bug Tracker": "https://github.com/mike-huls/toolbox/issues"
     },
     license='LICENSE',
-    packages=['MiklasLogger'],
+    packages=['EasyLogger'],
     install_requires=['logging >= 0.4.9.6'],
 )
