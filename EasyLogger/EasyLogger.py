@@ -3,14 +3,28 @@ import os
 from datetime import datetime
 
 
+# LOGGING_STYLES = ('DEFAULT', 'NEW_FILE')
+LOGGING_STYLES = {
+    'default': 'DEFAULT',
+    'newFile': 'NEW_FILE'
+}
+
+FILE_TYPE = '.log'
+
+"""
+DEFAULT will create one logging stream per logger and continually append.
+
+NEW_FILE will create a new log file each time a new logger instance is created.
+"""
+
 def getEasyLogger(
     
     logsDirectory: str,
     ignorePrintToConsole: bool = False,
     loggingLevel: str = 'INFO',
-    logFileSuffx: str = '',
     amountLogsToKeep: int | None = None,
     loggerName: str = 'EasyLogger',
+    loggingStyle: str = 'DEFAULT'
 ):
     """
     We can use this if we want a super easy logger
@@ -20,19 +34,26 @@ def getEasyLogger(
     if ignorePrintToConsole is None:
         ignorePrintToConsole is False
 
-    #now = datetime.now()
-    #nowString = now.strftime('%Y%m%d%H%M%S')
+    if loggingStyle not in (list(LOGGING_STYLES.values())):
+        loggingStyle = LOGGING_STYLES['default']
 
-    if logFileSuffx == '':
-        logFileSuffx = '_' + logFileSuffx 
-    logFileName = loggerName + '_' + logFileSuffx + '.log'
+
+    if loggingStyle == LOGGING_STYLES['default']:
+        logFilePrefix = loggerName
+    elif loggingStyle == LOGGING_STYLES['newFile']:
+        now = datetime.now()
+        nowString = now.strftime('%Y%m%d%H%M%S')
+        logFilePrefix = loggerName + '_' + nowString
+
+    fullLogFileName = logFilePrefix + FILE_TYPE
+
 
     if not os.path.exists(logsDirectory):
         os.makedirs(logsDirectory)
 
     logger = logging.getLogger(loggerName)
 
-    handler = logging.FileHandler(os.path.join(logsDirectory,logFileName), mode='w')
+    handler = logging.FileHandler(os.path.join(logsDirectory,fullLogFileName), mode='a')
 
     formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
 
@@ -42,26 +63,23 @@ def getEasyLogger(
 
 
     if amountLogsToKeep is not None:
-        logClean(logger, logsDirectory, logFileSuffx, amountLogsToKeep)
+        logClean(logger, logsDirectory, loggerName, amountLogsToKeep)
 
     return logger
 
 
-class MiklasLogger:
+class EasyLogger:
     def __init__(
         self,
         logsDirectory: str,
         ignorePrintToConsole: bool,
         loggingLevel: str = 'INFO',
-        logFileSuffix: str = '',
         amountLogsToKeep: int | None = None,
         loggerName: str = 'MiklasLogger',
     ):
         # self.loggingLevel = loggingLevel
 
         self._amountLogsToKeep = amountLogsToKeep
-
-        self._logFileSuffix = logFileSuffix
 
         if loggingLevel is None:
             loggingLevel = 'INFO'
@@ -120,10 +138,10 @@ class MiklasLogger:
 
 
 
-def logClean(logger, logsDirectory: str, logFileSuffx: str, amountLogsToKeep: int):
+def logClean(logger, logsDirectory: str, loggerName: str, amountLogsToKeep: int):
     filesInDir = os.listdir(logsDirectory)
     ticketLogFiles = [
-        file for file in filesInDir if file.endswith(logFileSuffx)
+        file for file in filesInDir if file.startswith(loggerName)
     ]
 
     if len(ticketLogFiles) >= amountLogsToKeep:
