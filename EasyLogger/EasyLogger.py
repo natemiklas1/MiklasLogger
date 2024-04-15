@@ -57,10 +57,13 @@ def getEasyLogger(
         mode=LOGGING_STYLES[loggingStyle]['mode'],
     )
 
-    formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')
+    formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(filename)s:%(lineno)d:%(message)s')
 
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+    # add the stream handler to print to the console as well, if chosen
+    if not ignorePrintToConsole:
+        logger.addHandler(logging.StreamHandler())
     logger.setLevel(loggingLevel)
 
     if amountLogsToKeep is not None:
