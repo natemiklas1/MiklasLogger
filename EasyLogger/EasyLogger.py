@@ -4,9 +4,10 @@ from datetime import datetime
 
 
 # LOGGING_STYLES = ('DEFAULT', 'NEW_FILE')
+# key is the user_input
 LOGGING_STYLES = {
-    'default': {'style': 'DEFAULT', 'mode': 'a'},
-    'newFile': {'style': 'NEW_FILE', 'mode': 'w'},
+    'DEFAULT': {'mode': 'a'},
+    'NEW_FILE': {'mode': 'w'},
 }
 
 FILE_TYPE = '.log'
@@ -34,16 +35,12 @@ def getEasyLogger(
     if ignorePrintToConsole is None:
         ignorePrintToConsole is False
 
-    styles = []
-    for k, v in LOGGING_STYLES.items():
-        styles.append(v['style'])   
-
-    if loggingStyle not in styles:
+    if loggingStyle not in LOGGING_STYLES.keys():
         loggingStyle = 'DEFAULT'
 
-    if loggingStyle == LOGGING_STYLES['default']:
+    if loggingStyle == 'DEFAULT':
         logFilePrefix = loggerName
-    elif loggingStyle == LOGGING_STYLES['newFile']:
+    elif loggingStyle == 'NEW_FILE':
         now = datetime.now()
         nowString = now.strftime('%Y%m%d%H%M%S')
         logFilePrefix = loggerName + '_' + nowString
@@ -56,7 +53,8 @@ def getEasyLogger(
     logger = logging.getLogger(loggerName)
 
     handler = logging.FileHandler(
-        os.path.join(logsDirectory, fullLogFileName), mode=LOGGING_STYLES[loggingStyle['mode']]
+        os.path.join(logsDirectory, fullLogFileName),
+        mode=LOGGING_STYLES[loggingStyle]['mode'],
     )
 
     formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(message)s')

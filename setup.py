@@ -22,5 +22,5 @@ setuptools.setup(
     },
     license='LICENSE',
     packages=['EasyLogger'],
-    install_requires=['logging >= 0.4.9.6'],
+    install_requires=[],
 )
