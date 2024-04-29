@@ -23,7 +23,7 @@ def getEasyLogger(
     logsDirectory: str,
     ignorePrintToConsole: bool = False,
     loggingLevel: str = 'INFO',
-    amountLogsToKeep: int | None = None,
+    amountLogsToKeep: int = 0,
     loggerName: str = 'EasyLogger',
     loggingStyle: str = 'DEFAULT',
 ):
@@ -66,7 +66,7 @@ def getEasyLogger(
         logger.addHandler(logging.StreamHandler())
     logger.setLevel(loggingLevel)
 
-    if amountLogsToKeep is not None:
+    if amountLogsToKeep is not None or amountLogsToKeep > 0:
         logClean(logger, logsDirectory, loggerName, amountLogsToKeep)
 
     return logger
