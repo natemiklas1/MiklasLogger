@@ -10,7 +10,7 @@ except TypeError:
 
 setuptools.setup(
     name='EasyLogger',
-    version='1.1.0',
+    version='1.1.1',
     author='Nathaniel Miklas',
     author_email='natemiklas1@gmail.com',
     description='Custom logging class because I got tired of rewriting one for each project',
