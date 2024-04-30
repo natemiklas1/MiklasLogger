@@ -145,30 +145,30 @@ def getEasyLogger(
 #         self._printMessage(message)
 
 
-# def logClean(logger, logsDirectory: str, loggerName: str, amountLogsToKeep: int):
-#     filesInDir = os.listdir(logsDirectory)
-#     ticketLogFiles = [file for file in filesInDir if file.startswith(loggerName)]
+def logClean(logger, logsDirectory: str, loggerName: str, amountLogsToKeep: int):
+    filesInDir = os.listdir(logsDirectory)
+    ticketLogFiles = [file for file in filesInDir if file.startswith(loggerName)]
 
-#     if len(ticketLogFiles) >= amountLogsToKeep:
-#         fileswithDates = [
-#             {
-#                 'date': os.path.getctime(os.path.join(logsDirectory, file)),
-#                 'fileName': file,
-#             }
-#             for file in ticketLogFiles
-#         ]
+    if len(ticketLogFiles) >= amountLogsToKeep:
+        fileswithDates = [
+            {
+                'date': os.path.getctime(os.path.join(logsDirectory, file)),
+                'fileName': file,
+            }
+            for file in ticketLogFiles
+        ]
 
-#         fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
-#         [
-#             (
-#                 logger.debug(
-#                     f"will delete file: {os.path.join(logsDirectory, file['fileName'])}"
-#                 ),
-#                 os.remove(os.path.join(logsDirectory, file['fileName'])),
-#             )
-#             for file in fileswithDatesSorted[
-#                 0 : len(fileswithDatesSorted) - amountLogsToKeep
-#             ]
-#         ]
-#     else:
-#         logger.debug("Cant't delete more logs than we have.")
+        fileswithDatesSorted = sorted(fileswithDates, key=lambda file: file['date'])
+        [
+            (
+                logger.debug(
+                    f"will delete file: {os.path.join(logsDirectory, file['fileName'])}"
+                ),
+                os.remove(os.path.join(logsDirectory, file['fileName'])),
+            )
+            for file in fileswithDatesSorted[
+                0 : len(fileswithDatesSorted) - amountLogsToKeep
+            ]
+        ]
+    else:
+        logger.debug("Cant't delete more logs than we have.")
