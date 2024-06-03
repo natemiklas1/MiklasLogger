@@ -66,8 +66,9 @@ def getEasyLogger(
         logger.addHandler(logging.StreamHandler())
     logger.setLevel(loggingLevel)
 
-    if amountLogsToKeep is not None or amountLogsToKeep > 0:
-        logClean(logger, logsDirectory, loggerName, amountLogsToKeep)
+    if loggingStyle == 'NEW_FILE':
+        if amountLogsToKeep > 0:
+            logClean(logger, logsDirectory, loggerName, amountLogsToKeep)
 
     return logger
 
